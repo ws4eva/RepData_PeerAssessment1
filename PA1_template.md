@@ -1,17 +1,10 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
-```{r global_options, include=FALSE}
-knitr::opts_chunk$set(fig.width=7, fig.height=5,
-                      echo=TRUE, warning=FALSE, message=FALSE)
-```
+
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 data.dir <- "E:\\R & Courses\\My Projects\\Reproducible Research\\Peer Assessment\\Data"
 
 setwd(data.dir)
@@ -24,27 +17,53 @@ data$date <- as.Date(data$date, "%Y-%m-%d")
 
 
 ## What is mean total number of steps taken per day?
-```{r, echo = TRUE}
+
+```r
 daily.steps <- aggregate(steps ~ date, data = data, sum)
 mean(daily.steps$steps)
 ```
 
+```
+## [1] 10766.19
+```
+
 ## What is the average daily activity pattern?
 ### Histogram
-```{r}
+
+```r
 library(ggplot2)
 qplot(steps, data = daily.steps, geom = "histogram", binwidth = 3000)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
 ### Time Series Plot
-```{r, echo = TRUE}
+
+```r
 qplot(date, steps, data = daily.steps, geom = "line")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
+```r
 mean(daily.steps$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(daily.steps$steps)
 ```
 
+```
+## [1] 10765
+```
+
 ## Imputing missing values
-```{r, echo = TRUE}
+
+```r
 new.data <- raw.data
 interval.steps.mean <- aggregate(steps ~ interval, data = data, mean)
 new.data$steps <- ifelse(is.na(raw.data$steps),interval.steps.mean$steps, raw.data$steps)
@@ -52,13 +71,30 @@ new.data$steps <- ifelse(is.na(raw.data$steps),interval.steps.mean$steps, raw.da
 new.daily.steps <- aggregate(steps ~ date, data = new.data, sum)
 
 qplot(steps, data = new.daily.steps, geom = "histogram", binwidth = 3000)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
+```r
 mean(new.daily.steps$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(new.daily.steps$steps)
+```
+
+```
+## [1] 10766.19
 ```
 Replacing missing values with mean 5-minute intervals make the overall distribution more concentrated to the centre with stronger normal distribution. While mean value remain the same, median value changed and becomes the same as mean value.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r, echo = TRUE}
+
+```r
 new.data <- raw.data
 new.data$date <- as.Date(new.data$date, "%Y-%m-%d")
 day <- as.character(weekdays(new.data$date))
@@ -69,9 +105,14 @@ plot.data <- aggregate(steps ~ interval + day, data = new.data, mean)
 qplot(interval, steps, data = plot.data[plot.data$day == "Weekend",], geom = "line")
 ```
 
-```{r, echo = TRUE}
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+
+
+```r
 qplot(interval, steps, data = plot.data[plot.data$day == "Weekday",], geom = "line")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
 
 Weekends tend to have more steps than weekdays and more uniform spread.
 
